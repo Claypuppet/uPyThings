@@ -1,6 +1,6 @@
 from machine import Pin, UART
 import time
-from micropyGPS import MicropyGPS
+from external_libs.micropyGPS import MicropyGPS
 
 uart = UART(2, 9600)
 
