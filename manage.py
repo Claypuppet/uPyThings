@@ -1,3 +1,7 @@
+"""
+Just a hacky script to help with the some commands
+"""
+
 import argparse
 import os
 
@@ -16,7 +20,7 @@ def main():
         type=str,
         dest='port',
         help='Device location, e.g. /dev/ttyUSBx or COMx',
-        required=True
+        default='dev'
     )
     parser.add_argument(
         '-b', '--baud',
