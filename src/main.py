@@ -24,6 +24,7 @@ def toggle(pin: Pin) -> None:
 
 
 def loop_read_geiger():
+    print("Initiating Geiger")
     global count, current
     pin_irover = Pin(4, Pin.IN)
     pin_irover.irq(trigger=Pin.IRQ_FALLING, handler=button_pressed)
@@ -36,16 +37,11 @@ def loop_read_geiger():
 
 
 def loop_read_gps():
+    print("Initiating GPS")
     uart.init(9600, bits=8, parity=None, stop=1)
-    command = b'PMTK220,5000'
-    checksum = 0
-    for c in command:
-        checksum ^= c
-    uart.write(bytearray(b'$'))
-    uart.write(bytearray(command))
-    uart.write(bytearray(b'*'))
-    uart.write(bytearray(checksum))
-    uart.write(bytearray(b'\r\n'))
+    command = b'$PMTK220,5000*1B\r\n'  # Configure the GPS module to send every 5 seconds
+    print(uart.write(bytearray(command)))
+
     my_gps = MicropyGPS()
     while 1:
         gps_bytes = uart.readline()
@@ -56,9 +52,8 @@ def loop_read_gps():
 
 
 def main():
+    time.sleep(1)
     # loop_read_geiger()
-    time.sleep(5)
-    print("Initiating GPS")
     loop_read_gps()
 
 
