@@ -1,5 +1,6 @@
 import machine
 import time
+import libs.micropyGPS
 
 # queue / circular buffer
 pin_g = machine.Pin(2, machine.Pin.OUT)
