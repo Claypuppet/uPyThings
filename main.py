@@ -1,8 +1,8 @@
 from machine import Pin, UART
 import time
-import libs.micropyGPS
+from micropyGPS import MicropyGPS
 
-uart = UART(1, 9600)
+uart = UART(2, 9600)
 
 # queue / circular buffer
 pin_g = Pin(2, Pin.OUT)
@@ -37,15 +37,28 @@ def loop_read_geiger():
 
 def loop_read_gps():
     uart.init(9600, bits=8, parity=None, stop=1)
+    command = b'PMTK220,5000'
+    checksum = 0
+    for c in command:
+        checksum ^= c
+    uart.write(bytearray(b'$'))
+    uart.write(bytearray(command))
+    uart.write(bytearray(b'*'))
+    uart.write(bytearray(checksum))
+    uart.write(bytearray(b'\r\n'))
+    my_gps = MicropyGPS()
     while 1:
-        gps_string = uart.readline()
-        if gps_string:
-            print(gps_string)
-        time.sleep(1)
+        gps_bytes = uart.readline()
+        if gps_bytes:
+            for x in str(gps_bytes):
+                my_gps.update(x)
+            print(my_gps.latitude)
 
 
 def main():
     # loop_read_geiger()
+    time.sleep(5)
+    print("Initiating GPS")
     loop_read_gps()
 
 
